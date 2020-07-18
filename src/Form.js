@@ -51,69 +51,74 @@ export default function Form() {
 
     //validation
     const validateChange = e => {
-        e.persist();
+        // e.persist();
 
-        // yup.reach(formSchema, e.target.name)
-        // .validate()
-        // .then(valid => setErrors({
-        //     ...errors,
-        //     [e.target.name]: ''
-        //     })
-        // )
-        // .catch(error => setErrors({
-        //     ...errors,
-        //     [e.target.name]: error.errors[0]
-        //     })
-        // );
-        if (e.target.value.length === 0) {
-            setErrors({
-                ...errors,
-                [e.target.name]: `${e.target.name} field is required`
-            });
-        }
+        yup.reach(formSchema, e.target.name)
+        .validate()
+        .then(valid => setErrors({
+            ...errors,
+            [e.target.name]: ''
+            })
+        )
+        .catch(error => setErrors({
+            ...errors,
+            [e.target.name]: error.errors[0]
+            })
+        );
+        // if (e.target.value.length === 0) {
+        //     setErrors({
+        //         ...errors,
+        //         [e.target.name]: `${e.target.name} field is required`
+        //     });
+        // }
     };
     const inputChange = e => {
-
-        const value = 
-            e.target.type === 'checkbox' ? e.target.checked : e.target.value;
-        setFormState({
+        e.persist();
+        const newFormData = {
             ...formState,
-            [e.target.name]: value
-        });
+            [e.target.name]:
+            e.target.type === "checkbox" ? e.target.checked : e.target.value
+        };
+
         validateChange(e);
+        setFormState(newFormData);
     };
 
     return (
         <form onSubmit={formSubmit}>
-            <Input
-                type = "text"
-                name="name"
-                onChange={inputChange}
-                value={formState.name}
-                label="Name"
-                errors={errors}
-            />
-            <Input
-                type="email"
-                name="email"
-                onChange={inputChange}
-                value={formState.email}
-                label="Email"
-                errors={errors}
-            />
-            <Input
-                type="password"
-                name="password"
-                onChange={inputChange}
-                value={formState.password}
-                label="Password"
-                errors={errors}
-            />
+            <label htmlFor="name">
+                <input
+                    type = "text"
+                    name="name"
+                    onChange={inputChange}
+                    value={formState.name}
+                />
+                {errors.name.length > 0 ? <p className='error'>{errors.name}</p> : null}
+            </label>
+            <label htmlFor="email">
+                <input
+                    type="email"
+                    name="email"
+                    onChange={inputChange}
+                    value={formState.email}
+                />
+                {errors.email.length > 0 ? (
+                    <p data-cy='email-error-msg' className='error'>{errors.email}</p>) : null}
+            </label>
+            <label htmlFor='password'>
+                <input
+                    type="password"
+                    name="password"
+                    onChange={inputChange}
+                    value={formState.password}
+                />
+                {errors.password.length > 0 ? <p className='error'>{errors.password}</p> : null}
+            </label>
             <label className="terms" htmlFor="terms">
                 <input name="terms" type="checkbox" onChange={inputChange} />
                 Terms & Conditions
             </label>
-            <button disabled={buttonDisabled}>Submit</button>
+            <button id="submit" disabled={buttonDisabled}>Submit</button>
             <div>{users}</div>
         </form>
         );
